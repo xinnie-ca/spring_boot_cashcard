@@ -4,6 +4,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.util.Objects;
 
 
 @Entity
@@ -34,5 +35,19 @@ public class CashCard{
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    //If we use the recrod class we don't need to override these two methods.
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof CashCard)) return false;
+        CashCard cashCard = (CashCard) obj;
+        return Objects.equals(id, cashCard.id)
+                && Objects.equals(amount, cashCard.amount);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, amount);
     }
 }
