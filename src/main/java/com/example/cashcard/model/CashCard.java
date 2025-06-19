@@ -14,11 +14,14 @@ public class CashCard{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Double amount;
+    private String owner;
+
     public CashCard(){}
 
-    public CashCard(Long id, Double amount){
+    public CashCard(Long id, Double amount,String owner){
         this.id = id;
         this.amount = amount;
+        this.owner=owner;
     }
 
     public Long getId() {
@@ -37,6 +40,14 @@ public class CashCard{
         this.amount = amount;
     }
 
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
     //If we use the recrod class we don't need to override these two methods.
     @Override
     public boolean equals(Object obj) {
@@ -51,3 +62,4 @@ public class CashCard{
         return Objects.hash(id, amount);
     }
 }
+
