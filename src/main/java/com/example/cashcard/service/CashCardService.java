@@ -8,14 +8,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.security.Principal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Optional;
 
 @Service
 public class CashCardService {
 
     private final CashCardRepository cashCardRepository;
+    private static final Logger log = LoggerFactory.getLogger(CashCardService.class);
     @Autowired
     public CashCardService (CashCardRepository cashCardRepository){
         this.cashCardRepository = cashCardRepository;
@@ -27,6 +28,8 @@ public class CashCardService {
      * @return a Optional<CashCard>
      */
     public Optional<CashCard> findById(Long id){
+        log.info("Service findById starts.");
+        log.info("Service findById ends.");
         return cashCardRepository.findById(id);
     }
 
@@ -38,7 +41,9 @@ public class CashCardService {
      * @return a saved cashcard object
      */
     public CashCard createCashCard(CashCard cashcard, String owner){
+        log.info("Service createCashCard starts.");
         CashCard newCashCard = new CashCard(null, cashcard.getAmount(), owner);
+        log.info("Service createCashCard ends.");
         return cashCardRepository.save(newCashCard);
     }
 
@@ -48,6 +53,8 @@ public class CashCardService {
      * @return a page of cashcards
      */
     public Page<CashCard> findAll(Pageable pageable){
+        log.info("Service findAll starts.");
+        log.info("Service findAll ends.");
         return cashCardRepository.findAll(pageable);
     }
 
@@ -58,7 +65,9 @@ public class CashCardService {
      * @return Optional <cashcard>
      */
     public Optional<CashCard> findByIdAndOwner(Long id, String owner){
+        log.info("Service findByIdAndOwner starts.");
         Optional<CashCard> cashCard = cashCardRepository.findByIdAndOwner(id,owner);
+        log.info("Service findByIdAndOwner ends.");
         return cashCard;
     }
 
@@ -69,6 +78,8 @@ public class CashCardService {
      * @return A page of cashcash that follow the specific page setting from the user.
      */
     public Page<CashCard> findByOwner(Pageable pageable,String owner){
+        log.info("Service findByOwner starts.");
+        log.info("Service findByOwner ends.");
         return cashCardRepository.findByOwner(owner, PageRequest
                 .of(pageable.getPageNumber(), pageable.getPageSize(),
                         pageable.getSortOr(Sort.by(Sort.Direction.DESC,"amount"))));
@@ -85,12 +96,15 @@ public class CashCardService {
      *         true if the update is success
      */
     public boolean updateCashCard(Long id, CashCard updateCashCard, String logInAs){
+        log.info("Service updateCashCard starts.");
         Optional<CashCard> cashCard = findByIdAndOwner(id, logInAs);
         if (!cashCard.isPresent()){
+            log.info("Service updateCashCard ends with cashcard not found.");
             return false;
         }
         CashCard cashCardUpdated = new CashCard(cashCard.get().getId(), updateCashCard.getAmount(), logInAs);
         cashCardRepository.save(cashCardUpdated);
+        log.info("Service updateCashCard ends correctly.");
         return true;
     }
 
@@ -103,11 +117,16 @@ public class CashCardService {
      *         true if deleted.
      */
     public boolean deleteCashCard(Long id, String logInAs){
+        log.info("Service deleteCashCard starts.");
+
         boolean exist = cashCardRepository.existsByIdAndOwner(id, logInAs);
         if (exist) {
             cashCardRepository.deleteById(id);
+            log.info("Service deletCashCard ends successfully.");
+
             return true;
         }
+        log.info("Service updateCashCard ends with not found.");
         return false;
     }
 

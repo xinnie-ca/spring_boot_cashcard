@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.security.Principal;
 import java.util.Optional;
@@ -22,7 +23,7 @@ import java.util.Optional;
 public class CashCardController {
 
     private final CashCardService cashCardService;
-
+    private static final Logger log = LoggerFactory.getLogger(CashCardController.class);
     @Autowired
     public CashCardController (CashCardService cashCardService){
         this.cashCardService = cashCardService;
@@ -30,7 +31,7 @@ public class CashCardController {
     @GetMapping("/{requestedId}")
     public ResponseEntity<CashCard> findById(@PathVariable Long requestedId, Principal principal) {
         Optional<CashCard> cashCardOptional = cashCardService.findByIdAndOwner(requestedId, principal.getName());
-
+        log.info("Cashcard {} is requested.",requestedId);
         if (cashCardOptional.isPresent()) {
             return ResponseEntity.ok(cashCardOptional.get());
         }
@@ -41,13 +42,14 @@ public class CashCardController {
     public ResponseEntity<Void> createCashCard (@Valid @RequestBody CashCard newCashCard, UriComponentsBuilder ucb, Principal principal){
         CashCard cashCard = cashCardService.createCashCard(newCashCard, principal.getName());
         URI location = ucb.path("cashcards/{id}").buildAndExpand(cashCard.getId()).toUri();
-
+        log.info("Cashcard {} is created",cashCard.getId());
         return ResponseEntity.created(location).build();
     }
 
     @GetMapping
     public ResponseEntity<Iterable<CashCard>> findAll(Pageable pageable, Principal principal){
         Page<CashCard> page = cashCardService.findByOwner(pageable, principal.getName());
+        log.info("Cashcard list of {}", principal.getName());
         return ResponseEntity.ok(page.getContent());
 
     }
@@ -61,7 +63,12 @@ public class CashCardController {
     public ResponseEntity<Void> putCashCard(@PathVariable Long requestedId, @Valid @RequestBody CashCard cashCardUpdate, Principal principle){
 
        boolean success = cashCardService.updateCashCard(requestedId, cashCardUpdate,principle.getName());
-       return success? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        if (success) {
+            log.info("Cashcard {} is updated.", requestedId);
+        } else {
+            log.error("Cashcard {} is not updated", requestedId);
+        }
+        return success? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
     /*
@@ -73,6 +80,11 @@ public class CashCardController {
     @DeleteMapping("/{requestedId}")
     public ResponseEntity<Void> deleteCashCard(@PathVariable Long requestedId, Principal principal){
         boolean success = cashCardService.deleteCashCard(requestedId,principal.getName());
+        if (success) {
+            log.info("Cashcard {} is deleted.", requestedId);
+        } else {
+            log.error("Cashcard {} is not deleted", requestedId);
+        }
         return success? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
