@@ -52,7 +52,7 @@ Users with the role `CARD-OWNER` can access endpoints under `/cashcards/**`.
 
 ---
 
-## 🧪 Running Tests
+## 🧪 Running the application and tests
 
 The project includes full **integration tests** using Spring Boot’s test framework:
 Integration tests are written using JUnit 5 and Spring Boot Test.
