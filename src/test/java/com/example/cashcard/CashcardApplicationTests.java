@@ -3,12 +3,10 @@ package com.example.cashcard;
 import com.example.cashcard.model.CashCard;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import com.sun.tools.jconsole.JConsoleContext;
 import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ResourceBanner;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
+
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -49,7 +47,6 @@ public class CashcardApplicationTests {
 	public void shouldNotReturnCashCardWithAnUnknownId(){
 		ResponseEntity<String> response = restTemplate.withBasicAuth("sarah1","abc123").getForEntity("/cashcards/1000",String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-
 	}
 
 	@Test
