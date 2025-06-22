@@ -94,7 +94,7 @@ public class CashCardController {
      */
     @PutMapping("/{requestedId}")
     public ResponseEntity<Void> putCashCard(@PathVariable Long requestedId, @Valid @RequestBody CashCard cashCardUpdate, Principal principle){
-        log.info("Method outCashCard() starts.");
+        log.info("Method pututCashCard() starts.");
 
         boolean success = cashCardService.updateCashCard(requestedId, cashCardUpdate,principle.getName());
         if (success) {
@@ -103,7 +103,7 @@ public class CashCardController {
 
             log.error("Cashcard {} is not updated", requestedId);
         }
-        log.info("Method outCashCard() ends.");
+        log.info("Method putCashCard() ends.");
         return success? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
