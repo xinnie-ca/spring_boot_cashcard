@@ -21,7 +21,6 @@ A secure RESTful Spring Boot application for managing virtual "Cash Cards". Buil
 com.example.cashcard
 ├── config           # SecurityConfig, OpenApiConfig
 ├── controller       # CashCardController
-├── dto              # CashCardRequest, CashCardResponse
 ├── model            # CashCard entity
 ├── repository       # CashCardRepository
 ├── service          # CashCardService
