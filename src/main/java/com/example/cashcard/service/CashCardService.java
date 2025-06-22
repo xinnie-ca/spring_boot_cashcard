@@ -1,5 +1,6 @@
 package com.example.cashcard.service;
 
+import com.example.cashcard.dto.CashCardRequestDTO;
 import com.example.cashcard.model.CashCard;
 import com.example.cashcard.repository.CashCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,19 +37,19 @@ public class CashCardService {
     /**
      * This service create a cashcard, the cashcar id is auto generated, the onwer is set to
      * principal
-     * @param cashcard a cashcard object with amount
+     * @param cashCardRequestDTO a cashcardDTO object with only amount
      * @param owner principal
      * @return a saved cashcard object
      */
-    public CashCard createCashCard(CashCard cashcard, String owner){
+    public CashCard createCashCard(CashCardRequestDTO cashCardRequestDTO, String owner){
         log.info("Service createCashCard starts.");
-        CashCard newCashCard = new CashCard(null, cashcard.getAmount(), owner);
+        CashCard newCashCard = new CashCard(null, cashCardRequestDTO.getAmount(), owner);
         log.info("Service createCashCard ends.");
         return cashCardRepository.save(newCashCard);
     }
 
     /**
-     *  This service retrieve a list of cashcards by the page setting
+     *  This service retrieve a list of cashcards by the page setting - not using
      * @param pageable page setting in the url
      * @return a page of cashcards
      */
@@ -90,19 +91,19 @@ public class CashCardService {
      * create a new cash card.
      * This method looks up whether the updating cash card exists
       * @param id cash card id
-     * @param updateCashCard requested http body
+     * @param cashCardRequestDTO requested http body
      * @param logInAs principal
      * @return false if the cash card does not exist
      *         true if the update is success
      */
-    public boolean updateCashCard(Long id, CashCard updateCashCard, String logInAs){
+    public boolean updateCashCard(Long id, CashCardRequestDTO cashCardRequestDTO, String logInAs){
         log.info("Service updateCashCard starts.");
         Optional<CashCard> cashCard = findByIdAndOwner(id, logInAs);
         if (!cashCard.isPresent()){
             log.info("Service updateCashCard ends with cashcard not found.");
             return false;
         }
-        CashCard cashCardUpdated = new CashCard(cashCard.get().getId(), updateCashCard.getAmount(), logInAs);
+        CashCard cashCardUpdated = new CashCard(cashCard.get().getId(), cashCardRequestDTO.getAmount(), logInAs);
         cashCardRepository.save(cashCardUpdated);
         log.info("Service updateCashCard ends correctly.");
         return true;
