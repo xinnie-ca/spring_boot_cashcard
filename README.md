@@ -44,7 +44,13 @@ docker build -t cashcard-app .
 docker run -p 8080:8080 cashcard-app
 ```
 
+---
+🧪 Testing
 
+Integration tests are included using @SpringBootTest, TestRestTemplate, and @DirtiesContext.
+
+To run tests:
+```mvn test```
 
 ---
 
