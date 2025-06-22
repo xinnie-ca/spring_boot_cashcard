@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public class CashCardRequestDTO {
-    @NotNull
-    @Positive
+    @NotNull(message = "Amount cannot be null.")
+    @Positive(message = "Amount must be greater than 0.")
     private Double amount;
 
     public CashCardRequestDTO(){}
