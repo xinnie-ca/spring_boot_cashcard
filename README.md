@@ -7,7 +7,7 @@ A secure RESTful Spring Boot application for managing virtual "Cash Cards". Buil
 
 - Java 21
 - Spring Boot
-- Spring Web + Spring Security
+- Spring Web + Spring Security- Uses DTOs for request/response decoupling
 - H2 (in-memory dev DB) 
 - JPA/Hibernate
 - Swagger (springdoc-openapi)
@@ -21,6 +21,7 @@ A secure RESTful Spring Boot application for managing virtual "Cash Cards". Buil
 com.example.cashcard
 ├── config           # SecurityConfig
 ├── controller       # CashCardController
+├── dto              # DTO classes for requests and responses
 ├── model            # CashCard entity
 ├── repository       # CashCardRepository
 ├── service          # CashCardService
@@ -43,7 +44,14 @@ mvn clean package
 docker build -t cashcard-app .
 docker run -p 8080:8080 cashcard-app
 ```
+Access the app at:
+http://localhost:8080
 
+Swagger UI:
+http://localhost:8080/swagger-ui.html
+
+H2 Console:
+http://localhost:8080/h2-console
 ---
 🧪 Testing
 
@@ -56,7 +64,7 @@ To run tests:
 
 ## 🔐 Authentication
 
-This app uses **Basic Authentication** with users defined in-memory.
+This app uses **Basic Authentication** with samples users defined in-memory.
 
 | Username   | Password | Role         |
 |------------|----------|--------------|
