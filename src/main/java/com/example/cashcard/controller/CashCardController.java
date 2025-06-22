@@ -16,9 +16,15 @@ import java.net.URI;
 import java.security.Principal;
 import java.util.Optional;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 
 @RestController
 @RequestMapping("/cashcards")
+@SecurityRequirement(name = "basicAuth")
 public class CashCardController {
 
     private final CashCardService cashCardService;
@@ -36,6 +42,11 @@ public class CashCardController {
      *         Http 404 if not found or authenticated user is not the owner of the card.
      */
     @GetMapping("/{requestedId}")
+    @Operation(summary = "Get a CashCard by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "CashCard found"),
+            @ApiResponse(responseCode = "404", description = "CashCard not found, or unauthorized")
+    })
     public ResponseEntity<CashCard> findById(@PathVariable Long requestedId, Principal principal) {
         log.info("Method findById() starts.");
 
@@ -56,8 +67,14 @@ public class CashCardController {
      * @param ucb Spring injected uro builder
      * @param principal Current authenticated user
      * @return Http 201 with location header
+     *         Http 400 invalid create data
      */
     @PostMapping
+    @Operation(summary = "Create a CashCard by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "CashCard created"),
+            @ApiResponse(responseCode = "400", description = "Invalid amount entered")
+    })
     public ResponseEntity<Void> createCashCard (@Valid @RequestBody CashCard newCashCard, UriComponentsBuilder ucb, Principal principal){
         log.info("Method createCashCard() starts.");
         CashCard cashCard = cashCardService.createCashCard(newCashCard, principal.getName());
@@ -74,6 +91,11 @@ public class CashCardController {
      * @return Http 200 - a list of cashcard in the response body, can be empty.
      */
     @GetMapping
+    @Operation(summary = "Get a list of CashCards")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "CashCards found"),
+            @ApiResponse(responseCode = "404", description = "CashCards not found, or unauthorized")
+    })
     public ResponseEntity<Iterable<CashCard>> findAll(Pageable pageable, Principal principal){
         log.info("Method findAll() starts.");
         Page<CashCard> page = cashCardService.findByOwner(pageable, principal.getName());
@@ -91,8 +113,15 @@ public class CashCardController {
      * @param principle Current authenticated user
      * @return Http 204 Not Content if update success, no body is returned in the response.
      *         Http 404 Not Found if the requested cashcard is not exist, or current authenticated user is not the owner.
+     *         Http 400 Invalid update data.
      */
     @PutMapping("/{requestedId}")
+    @Operation(summary = "Update an existing CashCard")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "CashCard updated successfully"),
+            @ApiResponse(responseCode = "404", description = "CashCard not found or not owned"),
+            @ApiResponse(responseCode = "400", description = "Invalid update data")
+    })
     public ResponseEntity<Void> putCashCard(@PathVariable Long requestedId, @Valid @RequestBody CashCard cashCardUpdate, Principal principle){
         log.info("Method pututCashCard() starts.");
 
@@ -116,6 +145,11 @@ public class CashCardController {
      *              not the owner.
      */
     @DeleteMapping("/{requestedId}")
+    @Operation(summary = "Delete a CashCard by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "CashCard deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "CashCard not found or not owned")
+    })
     public ResponseEntity<Void> deleteCashCard(@PathVariable Long requestedId, Principal principal){
         log.info("Method deleteCashCard() starts.");
 

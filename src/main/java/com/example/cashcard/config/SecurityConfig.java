@@ -19,13 +19,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(request -> request
                 .requestMatchers("/").permitAll()
-                .requestMatchers("/h2-console/**").permitAll()
+                .requestMatchers("/h2-console/**").hasRole("ADMIN") // only admin role can log in to db
                 .requestMatchers("/cashcards/**")
                 .hasRole("CARD-OWNER").anyRequest().authenticated()) // enable RBAC role base access control:.
                 .httpBasic(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin())); //️ for H2 console
-        ;
         return http.build();
     }
 
@@ -51,6 +50,11 @@ public class SecurityConfig {
                 .password(passwordEncoder.encode("xyz789"))
                 .roles("CARD-OWNER")
                 .build();
-        return new InMemoryUserDetailsManager(sarah,hankOwnsNoCards,kumar);
+        UserDetails xin = users
+                .username("xin")
+                .password(passwordEncoder.encode("xin"))
+                .roles("ADMIN")
+                .build();
+        return new InMemoryUserDetailsManager(sarah,hankOwnsNoCards,kumar,xin);
     }
 }
