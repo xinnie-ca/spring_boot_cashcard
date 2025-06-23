@@ -6,7 +6,6 @@ import com.example.cashcard.model.CashCard;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONArray;
-import org.apache.coyote.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -56,8 +55,8 @@ public class CashcardApplicationTests {
 	@Test
 	@DirtiesContext
 	public void shouldCreateANewCashCard(){
-		CashCard newCashCard = new CashCard(null, 250.00, null);
-		ResponseEntity<Void> response = restTemplate.withBasicAuth("sarah1","abc123").postForEntity("/cashcards", newCashCard, Void.class);
+		CashCardRequestDTO cashCardRequestDTO = new CashCardRequestDTO(250.00);
+		ResponseEntity<Void> response = restTemplate.withBasicAuth("sarah1","abc123").postForEntity("/cashcards", cashCardRequestDTO, Void.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 		URI location = response.getHeaders().getLocation();
@@ -162,7 +161,7 @@ public class CashcardApplicationTests {
 	@Test
 	@DirtiesContext
 	public void shouldUpdateAnExistingCashCard(){
-		HttpEntity<CashCard> request = new HttpEntity<>(new CashCard(null,19.99,null));
+		HttpEntity<CashCardRequestDTO> request = new HttpEntity<>(new CashCardRequestDTO(19.99));
 
 		ResponseEntity<Void> response = restTemplate
 				.withBasicAuth("sarah1","abc123")
@@ -177,13 +176,12 @@ public class CashcardApplicationTests {
 		assertThat(id).isEqualTo(99);
 		Double amount = documentContext.read("$.amount");
 		assertThat(amount).isEqualTo(19.99);
-
 	}
 
 	@Test
 	public void shouldNotUpdateACashCardThatDoesNotExist() {
 
-		HttpEntity<CashCard> request = new HttpEntity<CashCard>(new CashCard(null,888.88,null));
+		HttpEntity<CashCardRequestDTO> request = new HttpEntity<>(new CashCardRequestDTO(888.88));
 		ResponseEntity<Void> response = restTemplate
 				.withBasicAuth("sarah1","abc123")
 				.exchange("/cashcards/10000", HttpMethod.PUT, request, Void.class);
@@ -193,7 +191,7 @@ public class CashcardApplicationTests {
 
 	@Test
 	public void shouldNotUpdateACashCardThatIsOwnedBySomeoneElse(){
-		HttpEntity<CashCard> request = new HttpEntity<CashCard>(new CashCard(null,33.33,null));
+		HttpEntity<CashCardRequestDTO> request = new HttpEntity<>(new CashCardRequestDTO(33.33));
 		ResponseEntity<Void> response = restTemplate
 				.withBasicAuth("sarah1","abc123")
 				.exchange("/cashcards/102", HttpMethod.PUT, request, Void.class);
@@ -256,5 +254,33 @@ public class CashcardApplicationTests {
 		DocumentContext documentContext = JsonPath.parse( getResponse.getBody());
 		JSONArray amounts = documentContext.read("$..amount");
 		assertThat(amounts).containsExactly(150.00, 2.0,1.0);
+	}
+
+	@Test
+	public void shouldNotUpdateNotOwnedCashCard(){
+		List<CashCardBulkUpdateDTO> cashcards = List.of(new CashCardBulkUpdateDTO(99L,1.0),
+				new CashCardBulkUpdateDTO(100L,2.0),
+				new CashCardBulkUpdateDTO(102L,3.0)
+		);
+		HttpEntity<List<CashCardBulkUpdateDTO>> request = new HttpEntity<>(cashcards);
+		ResponseEntity<Void> response = restTemplate
+				.withBasicAuth("sarah1", "abc123")
+				.exchange("/cashcards/bulk", HttpMethod.PUT, request,Void.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+		ResponseEntity<String> getResponse = restTemplate
+				.withBasicAuth("sarah1","abc123")
+				.getForEntity("/cashcards", String.class);
+		DocumentContext documentContext = JsonPath.parse( getResponse.getBody());
+		JSONArray amounts = documentContext.read("$..amount");
+		assertThat(amounts).containsExactly(150.00, 2.0,1.0);
+
+		ResponseEntity<String> getResponseKumar = restTemplate
+				.withBasicAuth("kumar2","xyz789")
+				.getForEntity("/cashcards/102", String.class);
+		DocumentContext documentContextKumar = JsonPath.parse( getResponseKumar.getBody());
+		Double amount = documentContextKumar.read("$.amount");
+		assertThat(amount).isEqualTo(200.00);
+
 	}
 }
