@@ -10,7 +10,6 @@ import org.apache.coyote.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -92,7 +91,6 @@ public class CashcardApplicationTests {
 		//if change url to /cashcards?page=1&size=2, it will return one card(id=101) on the second page
 		ResponseEntity<String> response = restTemplate.withBasicAuth("sarah1","abc123").getForEntity("/cashcards?page=0&size=2",String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		System.out.println(response.getBody());
 		DocumentContext documentContext = JsonPath.parse(response.getBody());
 		int cashCardCount = documentContext.read("$.length()");
 		assertThat(cashCardCount).isEqualTo(2);

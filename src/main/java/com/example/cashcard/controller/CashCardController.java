@@ -142,7 +142,7 @@ public class CashCardController {
             log.info("Cashcard {} is updated.", requestedId);
         } else {
 
-            log.error("Cashcard {} is not updated", requestedId);
+            log.info("Cashcard {} is not updated", requestedId);
         }
         log.info("Method putCashCard() ends.");
         return success? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
@@ -162,7 +162,12 @@ public class CashCardController {
     })
     public ResponseEntity<Void> putCashcardBulk(
             @Valid @RequestBody List<@Valid CashCardBulkUpdateDTO> cashCardBulkUpdateDTOS, Principal principal){
-        cashCardService.bulkUpdate(cashCardBulkUpdateDTOS, principal.getName());
+        log.info("Receive payload: {}" , cashCardBulkUpdateDTOS);
+        try {
+            cashCardService.bulkUpdate(cashCardBulkUpdateDTOS, principal.getName());
+        }catch (Exception e){
+            log.error("BULK"+e.getMessage(), e);
+        }
         return ResponseEntity.noContent().build();
     }
 
@@ -187,7 +192,7 @@ public class CashCardController {
         if (success) {
             log.info("Cashcard {} is deleted.", requestedId);
         } else {
-            log.error("Cashcard {} is not deleted", requestedId);
+            log.info("Cashcard {} is not deleted", requestedId);
         }
         log.info("Method deleteCashCard() ends.");
         return success? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();

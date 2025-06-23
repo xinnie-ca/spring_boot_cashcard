@@ -120,6 +120,7 @@ public class CashCardService {
      * @param owner
      */
     public void bulkUpdate(List<CashCardBulkUpdateDTO> cashCardBulkUpdateDTOS, String owner){
+        log.info("BULK update starts");
         List<CashCard> cashCards = new ArrayList<>();
         for(CashCardBulkUpdateDTO dto: cashCardBulkUpdateDTOS){
             Optional<CashCard> cashcardOptional = cashCardRepository.findByIdAndOwner(dto.getId(), owner);
@@ -128,6 +129,8 @@ public class CashCardService {
             }
         }
         cashCardRepository.saveAll(cashCards);
+        log.info("BULK update ends");
+
     }
 
     /**
