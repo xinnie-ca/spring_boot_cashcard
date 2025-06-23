@@ -2,8 +2,18 @@
 
 A secure RESTful Spring Boot application for managing virtual "Cash Cards". Built with clean architecture, layered design, and best practices for modern backend development.
 
+## 🚀 Features
 
-## 🚀 Technologies
+- Full REST API for managing CashCards
+- Basic Authentication with Role-Based Access Control (`CARD-OWNER`, `ADMIN`)
+- In-memory H2 Database for quick prototyping
+- DTOs for request/response separation and validation
+- Global Exception Handling for user-friendly error responses
+- API documentation with Swagger UI
+- Unit and Integration Testing with `TestRestTemplate`
+- Docker support for containerized deployment
+---
+## 📦 Technologies
 
 - Java 21
 - Spring Boot
@@ -25,6 +35,7 @@ com.example.cashcard
 ├── model            # CashCard entity
 ├── repository       # CashCardRepository
 ├── service          # CashCardService
+├── error            # Exception Handler
 └── CashcardApplication.java
 
 </pre>
@@ -86,6 +97,7 @@ User with thte role `ADMIN` can access ednpoints under `/h2-console/**`.
 | GET    | `/cashcards`         | List all cards (with paging)      | ✅            |
 | POST   | `/cashcards`         | Create a new cash card            | ✅            |
 | PUT    | `/cashcards/{id}`    | Update an existing card           | ✅            |
+| PUT    | `/cashcards/bulk`    | Update all existing cards         | ✅            |
 | DELETE | `/cashcards/{id}`    | Delete a cash card by ID          | ✅            |
 
 
