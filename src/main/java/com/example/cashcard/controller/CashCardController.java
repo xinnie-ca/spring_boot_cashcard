@@ -213,11 +213,15 @@ public class CashCardController {
             @ApiResponse(responseCode = "404", description = "One or more cashCards not found or not owned")
     })
     public ResponseEntity<Void> deleteCashCardBulk(@Valid @RequestBody List<Long> ids, Principal principal){
+        log.info("Method deleteCashCardBulk() starts.");
         try {
             cashCardService.bulkDeleteCashCard(ids, principal.getName());
+            log.info("Successfully deleted cashcards {}", ids);
+            log.info("Method deleteCashCardBulk() ends.");
             return ResponseEntity.noContent().build();
-
         }catch(Exception e){
+            log.warn("Bulk delete failed");
+            log.info("Method deleteCashCardBulk() eds.");
             return ResponseEntity.notFound().build();
 
         }
