@@ -238,7 +238,7 @@ public class CashcardApplicationTests {
 	}
 
 	@Test
-	public void shouldUpdateAllExistCashCards(){
+	public void shouldUpdateSelectedExistCashCards(){
 		List<CashCardBulkUpdateDTO> cashcards = List.of(new CashCardBulkUpdateDTO(99L,1.0),
 				new CashCardBulkUpdateDTO(100L,2.0)
 				);
@@ -257,7 +257,7 @@ public class CashcardApplicationTests {
 	}
 
 	@Test
-	public void shouldNotUpdateNotOwnedCashCard(){
+	public void shouldNotUpdateAnythingIfNotOwnedCashCardInTheList(){
 		List<CashCardBulkUpdateDTO> cashcards = List.of(new CashCardBulkUpdateDTO(99L,1.0),
 				new CashCardBulkUpdateDTO(100L,2.0),
 				new CashCardBulkUpdateDTO(102L,3.0)
@@ -281,6 +281,19 @@ public class CashcardApplicationTests {
 		DocumentContext documentContextKumar = JsonPath.parse( getResponseKumar.getBody());
 		Double amount = documentContextKumar.read("$.amount");
 		assertThat(amount).isEqualTo(200.00);
+	}
+
+	@Test
+	public void shouldNotUpdateNotExistCashCard(){
+		List<CashCardBulkUpdateDTO> cashcards = List.of(new CashCardBulkUpdateDTO(999L,1.0),
+				new CashCardBulkUpdateDTO(1009L,2.0),
+				new CashCardBulkUpdateDTO(1029L,3.0)
+		);
+		HttpEntity<List<CashCardBulkUpdateDTO>> request = new HttpEntity<>(cashcards);
+		ResponseEntity<Void> response = restTemplate
+				.withBasicAuth("sarah1", "abc123")
+				.exchange("/cashcards/bulk", HttpMethod.PUT, request,Void.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
 
 	@Test
