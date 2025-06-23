@@ -158,14 +158,15 @@ public class CashCardController {
     @Operation(summary="Bulk update cashcards")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "CashCards update successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid update data")
+            @ApiResponse(responseCode = "400", description = "Invalid update data"),
+            @ApiResponse(responseCode = "404", description = "One or more cashcards do not exsit or are not owned")
     })
     public ResponseEntity<Void> putCashcardBulk(
             @Valid @RequestBody List<@Valid CashCardBulkUpdateDTO> cashCardBulkUpdateDTOS, Principal principal){
         try {
             cashCardService.bulkUpdate(cashCardBulkUpdateDTOS, principal.getName());
         }catch (Exception e){
-            log.error("BULK"+e.getMessage(), e);
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.noContent().build();
     }
@@ -197,11 +198,19 @@ public class CashCardController {
         return success? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
+    /**
+     * Bulk delete cash cards. do not delete anything if not exist or not owned
+     * @param ids List of ids to be deleted
+     * @param principal
+     * @return 404 if not found or not owner
+     *         204 if successful
+     */
     @DeleteMapping("/bulk")
     @Operation(summary = "Bulk delete cashcards")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "CashCards deleted successfully"),
-            @ApiResponse(responseCode = "400", description = "One or more cashCards not found or not owned")
+            @ApiResponse(responseCode = "400", description = "Invalid ids passed"),
+            @ApiResponse(responseCode = "404", description = "One or more cashCards not found or not owned")
     })
     public ResponseEntity<Void> deleteCashCardBulk(@Valid @RequestBody List<Long> ids, Principal principal){
         try {

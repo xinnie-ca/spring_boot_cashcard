@@ -266,14 +266,14 @@ public class CashcardApplicationTests {
 		ResponseEntity<Void> response = restTemplate
 				.withBasicAuth("sarah1", "abc123")
 				.exchange("/cashcards/bulk", HttpMethod.PUT, request,Void.class);
-		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
 		ResponseEntity<String> getResponse = restTemplate
 				.withBasicAuth("sarah1","abc123")
 				.getForEntity("/cashcards", String.class);
 		DocumentContext documentContext = JsonPath.parse( getResponse.getBody());
 		JSONArray amounts = documentContext.read("$..amount");
-		assertThat(amounts).containsExactly(150.00, 2.0,1.0);
+		assertThat(amounts).containsExactlyInAnyOrder(123.45, 1.0,150.0);
 
 		ResponseEntity<String> getResponseKumar = restTemplate
 				.withBasicAuth("kumar2","xyz789")
@@ -281,7 +281,6 @@ public class CashcardApplicationTests {
 		DocumentContext documentContextKumar = JsonPath.parse( getResponseKumar.getBody());
 		Double amount = documentContextKumar.read("$.amount");
 		assertThat(amount).isEqualTo(200.00);
-
 	}
 
 	@Test

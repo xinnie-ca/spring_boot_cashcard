@@ -115,22 +115,24 @@ public class CashCardService {
 
 
     /**
-     * Update all cashcards listed in the request body
+     * Bulk update cash cards. if not exist or not owned, the endpoint does not update anything and
+     * throw exception
      * @param cashCardBulkUpdateDTOS
      * @param owner
      */
     public void bulkUpdate(List<CashCardBulkUpdateDTO> cashCardBulkUpdateDTOS, String owner){
         log.info("BULK update starts");
         List<CashCard> cashCards = new ArrayList<>();
-        for(CashCardBulkUpdateDTO dto: cashCardBulkUpdateDTOS){
-            Optional<CashCard> cashcardOptional = cashCardRepository.findByIdAndOwner(dto.getId(), owner);
-            if (cashcardOptional.isPresent()){
-                cashCards.add(new CashCard(cashcardOptional.get().getId(), dto.getAmount(), owner));
+            for (CashCardBulkUpdateDTO dto : cashCardBulkUpdateDTOS) {
+                Optional<CashCard> cashcardOptional = cashCardRepository.findByIdAndOwner(dto.getId(), owner);
+                if (cashcardOptional.isPresent()) {
+                    cashCards.add(new CashCard(cashcardOptional.get().getId(), dto.getAmount(), owner));
+                } else {
+                    throw new IllegalArgumentException("One or more cashcards do not exist or not owned.");
+                }
             }
-        }
         cashCardRepository.saveAll(cashCards);
         log.info("BULK update ends");
-
     }
 
     /**
