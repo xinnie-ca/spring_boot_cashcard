@@ -1,5 +1,6 @@
 package com.example.cashcard.controller;
 
+import com.example.cashcard.dto.CashCardBulkUpdateDTO;
 import com.example.cashcard.dto.CashCardRequestDTO;
 import com.example.cashcard.dto.CashCardResponseDTO;
 import com.example.cashcard.model.CashCard;
@@ -148,6 +149,24 @@ public class CashCardController {
     }
 
     /**
+     * Bulk update the cashcards
+     * @param cashCardBulkUpdateDTOS
+     * @param principal
+     * @return
+     */
+    @PutMapping("/bulk")
+    @Operation(summary="Bulk update cashcards")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "CashCards update successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid update data")
+    })
+    public ResponseEntity<Void> putCashcardBulk(
+            @Valid @RequestBody List<@Valid CashCardBulkUpdateDTO> cashCardBulkUpdateDTOS, Principal principal){
+        cashCardService.bulkUpdate(cashCardBulkUpdateDTOS, principal.getName());
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
      * Delete a cashcard record - hard delete
      * @param requestedId Cashcard ID
      * @param principal Current authenticated user
@@ -173,5 +192,6 @@ public class CashCardController {
         log.info("Method deleteCashCard() ends.");
         return success? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
+
 
 }

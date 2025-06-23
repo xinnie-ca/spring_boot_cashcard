@@ -1,12 +1,16 @@
 package com.example.cashcard;
 
+import com.example.cashcard.dto.CashCardBulkUpdateDTO;
+import com.example.cashcard.dto.CashCardRequestDTO;
 import com.example.cashcard.model.CashCard;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONArray;
+import org.apache.coyote.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -17,6 +21,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.net.URI;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -234,5 +239,24 @@ public class CashcardApplicationTests {
 				.withBasicAuth("kumar2","xyz789")
 				.getForEntity("/cashcards/102", String.class);
 		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+	}
+
+	@Test
+	public void shouldUpdateAllExistCashCards(){
+		List<CashCardBulkUpdateDTO> cashcards = List.of(new CashCardBulkUpdateDTO(99L,1.0),
+				new CashCardBulkUpdateDTO(100L,2.0)
+				);
+		HttpEntity<List<CashCardBulkUpdateDTO>> request = new HttpEntity<>(cashcards);
+		ResponseEntity<Void> response = restTemplate
+				.withBasicAuth("sarah1", "abc123")
+				.exchange("/cashcards/bulk", HttpMethod.PUT, request,Void.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+		ResponseEntity<String> getResponse = restTemplate
+				.withBasicAuth("sarah1","abc123")
+				.getForEntity("/cashcards", String.class);
+		DocumentContext documentContext = JsonPath.parse( getResponse.getBody());
+		JSONArray amounts = documentContext.read("$..amount");
+		assertThat(amounts).containsExactly(150.00, 2.0,1.0);
 	}
 }

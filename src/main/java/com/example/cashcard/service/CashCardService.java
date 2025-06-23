@@ -1,5 +1,6 @@
 package com.example.cashcard.service;
 
+import com.example.cashcard.dto.CashCardBulkUpdateDTO;
 import com.example.cashcard.dto.CashCardRequestDTO;
 import com.example.cashcard.model.CashCard;
 import com.example.cashcard.repository.CashCardRepository;
@@ -11,6 +12,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -107,6 +111,23 @@ public class CashCardService {
         cashCardRepository.save(cashCardUpdated);
         log.info("Service updateCashCard ends correctly.");
         return true;
+    }
+
+
+    /**
+     * Update all cashcards listed in the request body
+     * @param cashCardBulkUpdateDTOS
+     * @param owner
+     */
+    public void bulkUpdate(List<CashCardBulkUpdateDTO> cashCardBulkUpdateDTOS, String owner){
+        List<CashCard> cashCards = new ArrayList<>();
+        for(CashCardBulkUpdateDTO dto: cashCardBulkUpdateDTOS){
+            Optional<CashCard> cashcardOptional = cashCardRepository.findByIdAndOwner(dto.getId(), owner);
+            if (cashcardOptional.isPresent()){
+                cashCards.add(new CashCard(cashcardOptional.get().getId(), dto.getAmount(), owner));
+            }
+        }
+        cashCardRepository.saveAll(cashCards);
     }
 
     /**
