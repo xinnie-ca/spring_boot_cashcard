@@ -31,6 +31,13 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", "Wrong data type passed in."));
     }
 
+    //Handle when the user is not exist or not found for bulk update and bulk delete
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
     //Handle unexpected error
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {

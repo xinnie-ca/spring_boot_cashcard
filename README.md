@@ -97,7 +97,9 @@ User with thte role `ADMIN` can access ednpoints under `/h2-console/**`.
 | GET    | `/cashcards`         | List all cards (with paging)      | ✅            |
 | POST   | `/cashcards`         | Create a new cash card            | ✅            |
 | PUT    | `/cashcards/{id}`    | Update an existing card           | ✅            |
-| PUT    | `/cashcards/bulk`    | Update all existing cards         | ✅            |
+| PUT    | `/cashcards/bulk`    | Update all selected cards         | ✅            |
 | DELETE | `/cashcards/{id}`    | Delete a cash card by ID          | ✅            |
+| DELETE | `/cashcards/bulk`    | Delete all selected cards         | ✅            |
+
 
 

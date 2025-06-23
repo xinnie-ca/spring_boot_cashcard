@@ -163,11 +163,7 @@ public class CashCardController {
     })
     public ResponseEntity<Void> putCashcardBulk(
             @Valid @RequestBody List<@Valid CashCardBulkUpdateDTO> cashCardBulkUpdateDTOS, Principal principal){
-        try {
             cashCardService.bulkUpdate(cashCardBulkUpdateDTOS, principal.getName());
-        }catch (Exception e){
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.noContent().build();
     }
 
@@ -210,22 +206,17 @@ public class CashCardController {
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "CashCards deleted successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid ids passed"),
-            @ApiResponse(responseCode = "404", description = "One or more cashCards not found or not owned")
+            @ApiResponse(responseCode = "404", description = "One or more cashCards not found or not owned or empty id list")
     })
     public ResponseEntity<Void> deleteCashCardBulk(@Valid @RequestBody List<Long> ids, Principal principal){
         log.info("Method deleteCashCardBulk() starts.");
-        try {
+        if (ids.isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
             cashCardService.bulkDeleteCashCard(ids, principal.getName());
             log.info("Successfully deleted cashcards {}", ids);
             log.info("Method deleteCashCardBulk() ends.");
             return ResponseEntity.noContent().build();
-        }catch(Exception e){
-            log.warn("Bulk delete failed");
-            log.info("Method deleteCashCardBulk() eds.");
-            return ResponseEntity.notFound().build();
-
-        }
     }
-
 
 }
