@@ -152,7 +152,7 @@ public class CashCardController {
      * Bulk update the cashcards
      * @param cashCardBulkUpdateDTOS
      * @param principal
-     * @return
+     * @return 204 no content, ignore if the user tried to delete cashcards that do not belong
      */
     @PutMapping("/bulk")
     @Operation(summary="Bulk update cashcards")
@@ -162,7 +162,6 @@ public class CashCardController {
     })
     public ResponseEntity<Void> putCashcardBulk(
             @Valid @RequestBody List<@Valid CashCardBulkUpdateDTO> cashCardBulkUpdateDTOS, Principal principal){
-        log.info("Receive payload: {}" , cashCardBulkUpdateDTOS);
         try {
             cashCardService.bulkUpdate(cashCardBulkUpdateDTOS, principal.getName());
         }catch (Exception e){
@@ -196,6 +195,23 @@ public class CashCardController {
         }
         log.info("Method deleteCashCard() ends.");
         return success? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/bulk")
+    @Operation(summary = "Bulk delete cashcards")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "CashCards deleted successfully"),
+            @ApiResponse(responseCode = "400", description = "One or more cashCards not found or not owned")
+    })
+    public ResponseEntity<Void> deleteCashCardBulk(@Valid @RequestBody List<Long> ids, Principal principal){
+        try {
+            cashCardService.bulkDeleteCashCard(ids, principal.getName());
+            return ResponseEntity.noContent().build();
+
+        }catch(Exception e){
+            return ResponseEntity.notFound().build();
+
+        }
     }
 
 

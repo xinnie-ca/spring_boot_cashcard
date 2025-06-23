@@ -283,4 +283,57 @@ public class CashcardApplicationTests {
 		assertThat(amount).isEqualTo(200.00);
 
 	}
+
+	@Test
+	public void shouldDeleteAllRequestedCashCards(){
+		HttpEntity<List<Long>> request = new HttpEntity<>(List.of(99L,100L));
+		ResponseEntity<Void> response = restTemplate.withBasicAuth("sarah1","abc123")
+				.exchange("/cashcards/bulk", HttpMethod.DELETE, request, Void.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+		ResponseEntity<String> getResponse = restTemplate.withBasicAuth("sarah1","abc123")
+				.getForEntity("/cashcards", String.class);
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+		int count = documentContext.read("$.length()");
+		assertThat(count).isEqualTo(1);
+		JSONArray ids = documentContext.read("$..id");
+		assertThat(ids).containsExactly(101);
+
+	}
+
+	@Test
+	public void shouldNotDeleteCashCardsNotOwned(){
+		HttpEntity<List<Long>> request = new HttpEntity<>(List.of(99L,100L,102L));
+		ResponseEntity<Void> response = restTemplate.withBasicAuth("sarah1","abc123")
+				.exchange("/cashcards/bulk", HttpMethod.DELETE, request, Void.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+		ResponseEntity<String> getResponse = restTemplate.withBasicAuth("sarah1","abc123")
+				.getForEntity("/cashcards", String.class);
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+		DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+		int count = documentContext.read("$.length()");
+		assertThat(count).isEqualTo(3);
+		JSONArray ids = documentContext.read("$..id");
+		assertThat(ids).containsExactlyInAnyOrder(99,100,101);
+
+		ResponseEntity<String> getResponseKumar = restTemplate.withBasicAuth("kumar2","xyz789")
+				.getForEntity("/cashcards", String.class);
+		assertThat(getResponseKumar.getStatusCode()).isEqualTo(HttpStatus.OK);
+		DocumentContext documentContextKumar = JsonPath.parse(getResponseKumar.getBody());
+		int countKumar = documentContextKumar.read("$.length()");
+		assertThat(countKumar).isEqualTo(1);
+		JSONArray idsKumar = documentContextKumar.read("$..id");
+		assertThat(idsKumar).containsExactlyInAnyOrder(102);
+	}
+
+	@Test
+	public void shouldNotDeleteCashCardsNotExist() {
+		HttpEntity<List<Long>> request = new HttpEntity<>(List.of(1000L,2000L));
+		ResponseEntity<Void> response = restTemplate.withBasicAuth("sarah1", "abc123")
+				.exchange("/cashcards/bulk", HttpMethod.DELETE, request, Void.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+	}
 }

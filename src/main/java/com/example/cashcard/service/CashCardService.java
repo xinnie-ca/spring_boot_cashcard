@@ -155,4 +155,21 @@ public class CashCardService {
         return false;
     }
 
+    /**
+     * Delete cash cards based on the ids, catch the exception when user does not own a card in
+     * the list
+     * @param ids ids to be deleted
+     * @param owner
+     *
+     */
+    public void bulkDeleteCashCard (List<Long> ids, String owner){
+        for(Long id : ids){
+            boolean exist = cashCardRepository.existsByIdAndOwner(id,owner);
+            if(!exist){
+                throw new IllegalArgumentException("One or more cashcards are not owed or not found");
+            }
+        }
+        cashCardRepository.deleteAllById(ids);
+    }
+
 }
