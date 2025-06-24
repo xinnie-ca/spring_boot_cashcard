@@ -41,7 +41,7 @@ com.example.cashcard
 
 </pre>
 ---
-🔐 Security Setup
+## 🔐 Security Setup
 -	Basic authentication is required for all endpoints except / and /swagger-ui/**.
 -	Role-based access control:
 -	CARD-OWNER: Can access /cashcards/**
