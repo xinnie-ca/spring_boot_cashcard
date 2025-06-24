@@ -3,7 +3,7 @@
 A secure Spring Boot REST API for managing virtual cash cards. This application demonstrates full CRUD operations, pagination, validation, exception handling, role-based security, and OpenAPI documentation using Swagger.
 ## 🚀 Features
 
-Create, read, update, and delete individual cash cards
+-   Create, read, update, and delete individual cash cards
 -	Bulk update and bulk delete endpoints
 -	Spring Security with Basic Authentication and Role-based access control
 -	DTO pattern for request/response separation
