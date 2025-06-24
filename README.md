@@ -107,15 +107,16 @@ This app uses **Basic Authentication** with samples users defined in-memory.
 
 ## 🔄 API Endpoints
 
-| Method | Endpoint             | Description                       | Auth Required |
-|--------|----------------------|-----------------------------------|---------------|
-| GET    | `/cashcards/{id}`    | Retrieve a cash card by ID        | ✅            |
-| GET    | `/cashcards`         | List all cards (with paging)      | ✅            |
-| POST   | `/cashcards`         | Create a new cash card            | ✅            |
-| PUT    | `/cashcards/{id}`    | Update an existing card           | ✅            |
-| PUT    | `/cashcards/bulk`    | Update all selected cards         | ✅            |
-| DELETE | `/cashcards/{id}`    | Delete a cash card by ID          | ✅            |
-| DELETE | `/cashcards/bulk`    | Delete all selected cards         | ✅            |
+| Method | Endpoint             | Description                       | Auth Required | Authorization |
+|--------|----------------------|-----------------------------------|---------------|---------------|
+| GET    | `/cashcards/{id}`    | Retrieve a cash card by ID        | ✅            |CARD-OWNER     |
+| GET    | `/cashcards`         | List all cards (with paging)      | ✅            |CARD-OWNER     |
+| GET    | `/cashcards/filter`  | List all cards by range(with paging)      | ✅            |ADMIN          |
+| POST   | `/cashcards`         | Create a new cash card            | ✅            |CARD-OWNER     |
+| PUT    | `/cashcards/{id}`    | Update an existing card           | ✅            |CARD-OWNER     |
+| PUT    | `/cashcards/bulk`    | Update all selected cards         | ✅            |CARD-OWNER     |
+| DELETE | `/cashcards/{id}`    | Delete a cash card by ID          | ✅            |CARD-OWNER     |
+| DELETE | `/cashcards/bulk`    | Delete all selected cards         | ✅            |CARD-OWNER     |
 
 
 
