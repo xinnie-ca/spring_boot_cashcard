@@ -1,17 +1,18 @@
 # 💳 CashCard API
 
-A secure RESTful Spring Boot application for managing virtual "Cash Cards". Built with clean architecture, layered design, and best practices for modern backend development.
-
+A secure Spring Boot REST API for managing virtual cash cards. This application demonstrates full CRUD operations, pagination, validation, exception handling, role-based security, and OpenAPI documentation using Swagger.
 ## 🚀 Features
 
-- Full REST API for managing CashCards
-- Basic Authentication with Role-Based Access Control (`CARD-OWNER`, `ADMIN`)
-- In-memory H2 Database for quick prototyping
-- DTOs for request/response separation and validation
-- Global Exception Handling for user-friendly error responses
-- API documentation with Swagger UI
-- Unit and Integration Testing with `TestRestTemplate`
-- Docker support for containerized deployment
+Create, read, update, and delete individual cash cards
+-	Bulk update and bulk delete endpoints
+-	Spring Security with Basic Authentication and Role-based access control
+-	DTO pattern for request/response separation
+-	Validation and error handling using @Valid and @RestControllerAdvice
+-	Pagination & sorting
+-	Swagger/OpenAPI integration for easy testing and documentation
+-	Unit and integration tests using JUnit
+-	H2 in-memory database for testing and demo
+-	Dockerized for consistent deployment
 ---
 ## 📦 Technologies
 
@@ -39,7 +40,12 @@ com.example.cashcard
 └── CashcardApplication.java
 
 </pre>
-
+---
+🔐 Security Setup
+-	Basic authentication is required for all endpoints except / and /swagger-ui/**.
+-	Role-based access control:
+-	CARD-OWNER: Can access /cashcards/**
+-	ADMIN: Can access /h2-console/**
 ---
 ### ✅ Run Locally
 
@@ -68,11 +74,25 @@ http://localhost:8080/h2-console
 
 Integration tests are included using @SpringBootTest, TestRestTemplate, and @DirtiesContext.
 
-To run tests:
+- To run tests:
 ```mvn test```
+---
+📦 DTOs
+
+DTOs ensure request/response payloads are clean and validated.
+•	CashCardRequestDTO: for create/update (requires amount > 0)
+•	CashCardResponseDTO: for responses (returns id and amount)
+•	CashCardBulkUpdateDTO: for bulk update requests (requires id > 0, amount > 0)
 
 ---
+💥 Global Exception Handling
 
+Implemented via @RestControllerAdvice:
+-	Returns meaningful validation errors (@Valid + @ExceptionHandler)
+-	Handles JSON parse errors (e.g., sending "amount": "abc")
+-	Returns 404 when cash card is not found or not owned
+-	Returns consistent error responses like:
+---
 ## 🔐 Authentication
 
 This app uses **Basic Authentication** with samples users defined in-memory.
@@ -82,10 +102,6 @@ This app uses **Basic Authentication** with samples users defined in-memory.
 | sarah1     | abc123   | CARD-OWNER   |
 | hank-owns-no-cards | qrs456 | NON-OWNER    |
 | kumar2     | xyz789   | CARD-OWNER   |
-
-
-Users with the role `CARD-OWNER` can access endpoints under `/cashcards/**`.
-User with thte role `ADMIN` can access ednpoints under `/h2-console/**`.
 
 ---
 

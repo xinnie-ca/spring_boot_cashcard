@@ -163,7 +163,10 @@ public class CashCardController {
     })
     public ResponseEntity<Void> putCashcardBulk(
             @Valid @RequestBody List<@Valid CashCardBulkUpdateDTO> cashCardBulkUpdateDTOS, Principal principal){
-            cashCardService.bulkUpdate(cashCardBulkUpdateDTOS, principal.getName());
+        if (cashCardBulkUpdateDTOS.isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+        cashCardService.bulkUpdate(cashCardBulkUpdateDTOS, principal.getName());
         return ResponseEntity.noContent().build();
     }
 
