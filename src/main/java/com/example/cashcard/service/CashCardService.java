@@ -22,6 +22,7 @@ public class CashCardService {
 
     private final CashCardRepository cashCardRepository;
     private static final Logger log = LoggerFactory.getLogger(CashCardService.class);
+
     @Autowired
     public CashCardService (CashCardRepository cashCardRepository){
         this.cashCardRepository = cashCardRepository;
@@ -150,7 +151,6 @@ public class CashCardService {
         if (exist) {
             cashCardRepository.deleteById(id);
             log.info("Service deletCashCard ends successfully.");
-
             return true;
         }
         log.info("Service updateCashCard ends with not found.");

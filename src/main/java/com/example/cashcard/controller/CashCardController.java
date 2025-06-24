@@ -141,7 +141,6 @@ public class CashCardController {
         if (success) {
             log.info("Cashcard {} is updated.", requestedId);
         } else {
-
             log.info("Cashcard {} is not updated", requestedId);
         }
         log.info("Method putCashCard() ends.");
@@ -158,7 +157,7 @@ public class CashCardController {
     @Operation(summary="Bulk update cashcards")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "CashCards update successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid update data"),
+            @ApiResponse(responseCode = "400", description = "Invalid update data or empty list"),
             @ApiResponse(responseCode = "404", description = "One or more cashcards do not exsit or are not owned")
     })
     public ResponseEntity<Void> putCashcardBulk(
@@ -208,8 +207,8 @@ public class CashCardController {
     @Operation(summary = "Bulk delete cashcards")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "CashCards deleted successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid ids passed"),
-            @ApiResponse(responseCode = "404", description = "One or more cashCards not found or not owned or empty id list")
+            @ApiResponse(responseCode = "400", description = "Invalid ids passed or empty list"),
+            @ApiResponse(responseCode = "404", description = "One or more cashCards not found or not owned ")
     })
     public ResponseEntity<Void> deleteCashCardBulk(@Valid @RequestBody List<Long> ids, Principal principal){
         log.info("Method deleteCashCardBulk() starts.");

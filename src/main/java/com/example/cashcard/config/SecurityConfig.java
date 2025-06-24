@@ -53,7 +53,7 @@ public class SecurityConfig {
         UserDetails xin = users
                 .username("xin")
                 .password(passwordEncoder.encode("xin"))
-                .roles("ADMIN")
+                .roles("ADMIN","CARD-OWNER")
                 .build();
         return new InMemoryUserDetailsManager(sarah,hankOwnsNoCards,kumar,xin);
     }
