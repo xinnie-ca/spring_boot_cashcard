@@ -9,7 +9,7 @@ Create, read, update, and delete individual cash cards
 -	DTO pattern for request/response separation
 -	Validation and error handling using @Valid and @RestControllerAdvice
 -	Pagination & sorting
--	Swagger/OpenAPI integration for easy testing and documentation
+-	Swagger/OpenAPI integration for documentation, and Postman for testing
 -	Unit and integration tests using JUnit
 -	H2 in-memory database for testing and demo
 -	Dockerized for consistent deployment
