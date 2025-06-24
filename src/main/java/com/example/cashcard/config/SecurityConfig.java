@@ -20,8 +20,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests(request -> request
                 .requestMatchers("/").permitAll()
                 .requestMatchers("/h2-console/**").hasRole("ADMIN") // only admin role can log in to db
-                .requestMatchers("/cashcards/**")
-                .hasRole("CARD-OWNER").anyRequest().authenticated()) // enable RBAC role base access control:.
+                .requestMatchers("/cashcards/**").hasRole("CARD-OWNER")
+                .anyRequest().authenticated()) // enable RBAC role base access control:.
                 .httpBasic(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin())); //️ for H2 console
