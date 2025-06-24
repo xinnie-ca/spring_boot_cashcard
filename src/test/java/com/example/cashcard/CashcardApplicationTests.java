@@ -347,4 +347,57 @@ public class CashcardApplicationTests {
 				.exchange("/cashcards/bulk", HttpMethod.DELETE, request, Void.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
+
+	@Test
+	public void shouldReturnFilteredCashCardsWithDefaultPage(){
+		ResponseEntity<String> response = restTemplate.withBasicAuth("sarah1","abc123")
+				.getForEntity("/cashcards/filter?min=1&max=160",String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(response.getBody());
+		int length = documentContext.read("$.length()");;
+		JSONArray amounts = documentContext.read("$..amount");
+		assertThat(length).isEqualTo(3);
+		assertThat(amounts).containsExactlyInAnyOrder(150.0,1.0,123.45);
+	}
+
+	@Test
+	public void shouldReturnFilteredCashCardsWithPage(){
+		ResponseEntity<String> response = restTemplate.withBasicAuth("sarah1","abc123")
+				.getForEntity("/cashcards/filter?min=1&max=160&page=0&size=3&sort=amount,desc",String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(response.getBody());
+		int length = documentContext.read("$.length()");;
+		JSONArray amounts = documentContext.read("$..amount");
+		assertThat(length).isEqualTo(3);
+		assertThat(amounts).containsExactly(150.0,123.45,1.0);
+	}
+
+	@Test
+	public void shouldReturnFilteredCashCardsWithoutAdminRole(){
+		ResponseEntity<String> response = restTemplate.withBasicAuth("kumar2","xyz789")
+				.getForEntity("/cashcards/filter?min=1&max=260&page=0&size=3&sort=amount,desc",String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+
+	}
+
+	@Test
+	public void shouldReturnFilteredCashCardsWithInvalidData(){
+		ResponseEntity<String> response = restTemplate.withBasicAuth("sarah1","abc123")
+				.getForEntity("/cashcards/filter?min=s&max=t&page=0&size=3&sort=amount,desc",String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+
+		ResponseEntity<String> responseNull = restTemplate.withBasicAuth("sarah1","abc123")
+				.getForEntity("/cashcards/filter?page=0&size=3&sort=amount,desc",String.class);
+		assertThat(responseNull.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+		ResponseEntity<String> responseEmpty = restTemplate.withBasicAuth("sarah1","abc123")
+				.getForEntity("/cashcards/filter?min=&max=&page=0&size=3&sort=amount,desc",String.class);
+		assertThat(responseEmpty.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+	}
+
+
 }

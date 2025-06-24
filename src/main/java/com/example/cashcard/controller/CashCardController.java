@@ -3,14 +3,19 @@ package com.example.cashcard.controller;
 import com.example.cashcard.dto.CashCardBulkUpdateDTO;
 import com.example.cashcard.dto.CashCardRequestDTO;
 import com.example.cashcard.dto.CashCardResponseDTO;
+import com.example.cashcard.dto.FilterParamDTO;
 import com.example.cashcard.model.CashCard;
 import com.example.cashcard.service.CashCardService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import jakarta.validation.Valid;
@@ -219,6 +224,37 @@ public class CashCardController {
             log.info("Successfully deleted cashcards {}", ids);
             log.info("Method deleteCashCardBulk() ends.");
             return ResponseEntity.noContent().build();
+    }
+
+
+    /**
+     * Return a list of cashcards that amount in the range min to max - ADMIN role only
+     * @param filterParamDTO for validate url parameter
+     * @param pageable
+     * @return 200 success
+     *         403 not admin role try to access
+     */
+    @GetMapping("/filter")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get a list of CashCards in the range of min and max")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "CashCards found",content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = CashCardResponseDTO.class))),
+            @ApiResponse(responseCode = "403", description = "Only admin has access to this method",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Bad parameters",
+                    content = @Content(mediaType = "application/json")),
+
+    })
+    public ResponseEntity<List<CashCardResponseDTO>> getFilteredCashCards(@Validated FilterParamDTO filterParamDTO,
+                                                                          Pageable pageable){
+        log.info("Method getFilterCashCards starts");
+        if ( filterParamDTO.getMin() >= filterParamDTO.getMax()) {
+            return ResponseEntity.badRequest().build();
+        }
+        List<CashCardResponseDTO> responseDTOS = cashCardService.findByAmountRange(filterParamDTO.getMin(), filterParamDTO.getMax(), pageable);
+        log.info("Method getFilterCashCards ends");
+        return ResponseEntity.ok(responseDTOS);
     }
 
 }

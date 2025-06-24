@@ -3,6 +3,7 @@ package com.example.cashcard.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +14,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -38,7 +40,7 @@ public class SecurityConfig {
         User.UserBuilder users = User.builder();
         UserDetails sarah = users.username("sarah1")
                 .password(passwordEncoder.encode("abc123"))
-                .roles("CARD-OWNER") // this must be enabled in the SecurityFilterChain
+                .roles("CARD-OWNER","ADMIN") // this must be enabled in the SecurityFilterChain
                 .build();
         UserDetails hankOwnsNoCards = users
                 .username("hank-owns-no-cards")

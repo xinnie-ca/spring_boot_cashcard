@@ -2,6 +2,7 @@ package com.example.cashcard.service;
 
 import com.example.cashcard.dto.CashCardBulkUpdateDTO;
 import com.example.cashcard.dto.CashCardRequestDTO;
+import com.example.cashcard.dto.CashCardResponseDTO;
 import com.example.cashcard.model.CashCard;
 import com.example.cashcard.repository.CashCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,6 +173,15 @@ public class CashCardService {
             }
         }
         cashCardRepository.deleteAllById(ids);
+    }
+
+    public List<CashCardResponseDTO> findByAmountRange(Double min, Double max, Pageable pageable){
+        log.info("findByAmountRange starts");
+        List<CashCard> cashCardsList = cashCardRepository.findByAmountRange(min,max,pageable);
+        List<CashCardResponseDTO> cashCardsResponseDTOS = cashCardsList.stream()
+                .map(card -> new CashCardResponseDTO(card.getId(), card.getAmount())).toList();
+        log.info("findByAmountRange ends");
+        return cashCardsResponseDTOS;
     }
 
 }
