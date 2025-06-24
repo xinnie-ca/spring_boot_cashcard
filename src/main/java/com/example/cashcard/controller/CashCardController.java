@@ -53,7 +53,7 @@ public class CashCardController {
             @ApiResponse(responseCode = "200", description = "Found the cash card",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CashCardResponseDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Cash card not found",
+            @ApiResponse(responseCode = "404", description = "Cash card not found, or not owned",
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<CashCardResponseDTO> findById(@PathVariable Long requestedId, Principal principal) {
