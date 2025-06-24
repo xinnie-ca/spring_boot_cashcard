@@ -45,7 +45,9 @@ com.example.cashcard
 -	Basic authentication is required for all endpoints except / and /swagger-ui/**.
 -	Role-based access control:
 -	CARD-OWNER: Can access /cashcards/**
--	ADMIN: Can access /h2-console/**
+-	ADMIN:
+    -	Can access /h2-console/**
+    - Method level authorization
 ---
 ### ✅ Run Locally
 
