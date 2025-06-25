@@ -232,6 +232,7 @@ public class CashCardController {
      * @param filterParamDTO for validate url parameter
      * @param pageable
      * @return 200 success
+     *         400 bad parameter
      *         403 not admin role try to access
      */
     @GetMapping("/filter")

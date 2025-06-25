@@ -55,6 +55,7 @@ public class CashCard{
     }
 
     //If we use the recrod class we don't need to override these two methods.
+    // For assert unit test when comparing two cashcards
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
