@@ -82,9 +82,10 @@ Integration tests are included using @SpringBootTest, TestRestTemplate, and @Dir
 📦 DTOs
 
 DTOs ensure request/response payloads are clean and validated.
-•	CashCardRequestDTO: for create/update (requires amount > 0)
-•	CashCardResponseDTO: for responses (returns id and amount)
-•	CashCardBulkUpdateDTO: for bulk update requests (requires id > 0, amount > 0)
+- CashCardRequestDTO: for create/update (requires amount > 0)
+- CashCardResponseDTO: for responses (returns id and amount)
+- CashCardBulkUpdateDTO: for bulk update requests (requires id > 0, amount > 0)
+- FilterParamDTO: for filter parameter DTO easier to validate the min and max.
 
 ---
 💥 Global Exception Handling
