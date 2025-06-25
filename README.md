@@ -62,6 +62,8 @@ mvn clean spring-boot:run
 mvn clean package
 docker build -t cashcard-app .
 docker run -p 8080:8080 cashcard-app
+or 
+docker-compose up -- build
 ```
 Access the app at:
 http://localhost:8080
