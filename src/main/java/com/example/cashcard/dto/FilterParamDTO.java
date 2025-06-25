@@ -11,7 +11,12 @@ public class FilterParamDTO {
     @NotNull
     @Min(0)
     private Double max;
+    public FilterParamDTO(){}
 
+    public FilterParamDTO(Double min, Double max){
+        this.max = max;
+        this.min = min;
+    }
     public Double getMax() {
         return max;
     }
