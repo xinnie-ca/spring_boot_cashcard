@@ -177,7 +177,9 @@ public class CashCardService {
 
     public List<CashCardResponseDTO> findByAmountRange(Double min, Double max, Pageable pageable){
         log.info("findByAmountRange starts");
-        List<CashCard> cashCardsList = cashCardRepository.findByAmountRange(min,max,pageable);
+        List<CashCard> cashCardsList = cashCardRepository.findByAmountRange(min,max,PageRequest
+                .of(pageable.getPageNumber(), pageable.getPageSize(),
+                        pageable.getSortOr(Sort.by(Sort.Direction.DESC,"amount"))));
         List<CashCardResponseDTO> cashCardsResponseDTOS = cashCardsList.stream()
                 .map(card -> new CashCardResponseDTO(card.getId(), card.getAmount())).toList();
         log.info("findByAmountRange ends");

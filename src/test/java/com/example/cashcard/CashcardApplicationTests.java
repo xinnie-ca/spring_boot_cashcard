@@ -358,7 +358,7 @@ public class CashcardApplicationTests {
 		int length = documentContext.read("$.length()");;
 		JSONArray amounts = documentContext.read("$..amount");
 		assertThat(length).isEqualTo(3);
-		assertThat(amounts).containsExactlyInAnyOrder(150.0,1.0,123.45);
+		assertThat(amounts).containsExactly(150.0,123.45,1.0);
 	}
 
 	@Test
